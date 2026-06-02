@@ -231,6 +231,10 @@
     <tomcat.version />
 
     <clirr.comparisonVersion>6.0.2</clirr.comparisonVersion>
+
+    <!-- JDK 1.8 / Tomcat 9 환경: 부모(mybatis-parent)의 1.6 기본값을 1.8로 덮어씀 -->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <profiles>
@@ -381,8 +385,9 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
               <configuration>
-                <source>1.8</source>
-                <target>1.8</target>
+                <testExcludes>
+                  <testExclude>**/*IT.java</testExclude>
+                </testExcludes>
               </configuration>
             </plugin>
           </plugins>
@@ -390,9 +395,9 @@
       </build>
     </profile>
     <profile>
-      <id>jdk8</id>
+      <id>jdk6</id>
       <activation>
-        <jdk>1.8</jdk>
+        <jdk>1.6</jdk>
       </activation>
       <build>
         <pluginManagement>
@@ -401,8 +406,9 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
               <configuration>
-                <source>1.8</source>
-                <target>1.8</target>
+                <testExcludes>
+                  <testExclude>**/*IT.java</testExclude>
+                </testExcludes>
               </configuration>
             </plugin>
           </plugins>
