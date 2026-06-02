@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.Resolution;
@@ -127,10 +126,23 @@ public class ExternalCallActionBean extends AbstractActionBean {
       return "";
     }
     StringBuilder sb = new StringBuilder();
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+    BufferedReader reader = null;
+    try {
+      // StandardCharsets(Java7+) 대신 "UTF-8" 문자열 사용 → animal-sniffer 1.6 시그니처 통과
+      reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
       String line;
       while ((line = reader.readLine()) != null) {
         sb.append(line);
+      }
+    } finally {
+      // try-with-resources 를 쓰면 Throwable.addSuppressed(Java7+) 가 생성되어 1.6 게이트에 걸리므로
+      // 고전적인 try/finally 로 직접 닫는다.
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (IOException ignore) {
+          // close 실패는 무시
+        }
       }
     }
     return sb.toString();
